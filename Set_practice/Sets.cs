@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,13 +9,13 @@ namespace Set_practice
 {
     internal class Sets
     {
-        static bool[] onOrOff = new bool[1000];
+        static bool[] onOrOff = new bool[1001];
         private int[] setArr;
         public Sets() { }
 
         public Sets(params int[] intArr)
         {
-            setArr = fixDuplicationInArr(intArr);
+           this.setArr = fixDuplicationInArr(intArr);
             addToGlobalArr(setArr);
         }
 
@@ -31,7 +32,7 @@ namespace Set_practice
             List<int> numsResultList = new List<int>();
 
             for (int i = 0; i < arrInput.Length; i++)
-               if(!numsResultList.Contains(arrInput[i]))
+               if(!numsResultList.Contains(arrInput[i]) && arrInput[i] < 1000 && arrInput[i] >= 0)
                     numsResultList.Add(arrInput[i]);
 
             return numsResultList.ToArray();
@@ -60,7 +61,7 @@ namespace Set_practice
                 for (int i = 0; i < sets.setArr.Length; i++)
                     intResult.Add(sets.setArr[i]);
 
-                this.setArr = intResult.ToArray();
+                this.setArr = fixDuplicationInArr(intResult.ToArray());
             }
             
         }
@@ -77,15 +78,14 @@ namespace Set_practice
 
                 setArr = intResult.ToArray();
             }
-
         }
 
         bool exsistArrInSet(Sets sets)
         {
-            if(sets.setArr != null)
+            if(sets.setArr != null || this.setArr != null)
                 return true;
             else
-                Console.WriteLine($"your object {sets} not contain array.");
+                Console.WriteLine("your object not contain array.");
             return false;
         } 
 
@@ -111,6 +111,7 @@ namespace Set_practice
 
         public bool IsMember(int number)
         {
+            if(exsistArrInSet(this))
             for (int i = 0; i < setArr.Length; i++)
                 if (setArr[i] == number) 
                     return true;
@@ -120,19 +121,67 @@ namespace Set_practice
 
         public void Inseret(int number)
         {
-            for (int i = 0; i < setArr.Length; i++)
-                if (setArr[i] == number)
-                    return;
+            if (exsistArrInSet(this))
+            {
+                for (int i = 0; i < setArr.Length; i++)
+                    if (setArr[i] == number)
+                        return;
 
-            Array.Resize(ref setArr, setArr.Length + 1);
-            setArr[setArr.GetUpperBound(0)] = number;
+                Array.Resize(ref setArr, setArr.Length + 1);
+                setArr[setArr.GetUpperBound(0)] = number;
+            }
+                
         }
 
         public void Delet(int number)
         {
+            if(exsistArrInSet(this))
             setArr = setArr.Where(val => val != number).ToArray();
         }
 
-    
+        public override string ToString()
+        {
+            string result = null;
+            if (exsistArrInSet(this))
+                for (int i = 0; i < setArr.Length; i++)
+                    result += setArr.Length -1 > i ? $"{setArr[i]}," : $"{setArr[i]}";
+
+            return result;
+        }
+
+        public override bool Equals(object obj)
+        {
+            Sets sets = obj as Sets;
+            bool canContinueCheck = false;
+            if (exsistArrInSet(sets))
+            {
+                for (int i = 0; i < sets.setArr.Length; i++)
+                {
+                    for (int j = 0; j < setArr.Length; j++)
+                        if (sets.setArr[i] == setArr[j]) 
+                            canContinueCheck = true;
+
+                    if (!canContinueCheck) 
+                        return false;
+                    canContinueCheck = false;
+                }
+                return true;
+            }
+            else 
+                return false;
+        }
+
+        public static int[] MakeRandomArr()
+        {
+            Random rnd = new Random();
+            int[] arrResult = new int[12];
+
+            for (int i = 0; i < arrResult.Length; i++)
+                arrResult[i] = rnd.Next(0, 1000);
+
+            return arrResult;
+        }
+
+
     }
 }
