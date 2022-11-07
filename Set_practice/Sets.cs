@@ -45,22 +45,94 @@ namespace Set_practice
         }
         public void PrintThisSetArr()
         {
-            for (int i = 0; i < setArr.Length; i++)
-                Console.WriteLine(setArr[i]);         
+            if (exsistArrInSet(this)) 
+                for (int i = 0; i < setArr.Length; i++)
+                    Console.WriteLine(setArr[i]);
         }
 
         public void Union(Sets sets)
         {
             List<int> intResult = new List<int>();
-            intResult = setArr.ToList();
+            if (exsistArrInSet(sets))
+            {
+                intResult = setArr.ToList();
+                
+                for (int i = 0; i < sets.setArr.Length; i++)
+                    intResult.Add(sets.setArr[i]);
 
-            for (int i = 0; i < sets.setArr.Length; i++)            
-                intResult.Add(sets.setArr[i]);
+                this.setArr = intResult.ToArray();
+            }
             
-            this.setArr = intResult.ToArray();
         }
 
-        
+        public void Intersect(Sets sets)
+        {
+            List<int> intResult = new List<int>();
+            if (exsistArrInSet(sets))
+            {
+                for (int i = 0; i < setArr.Length; i++)
+                    for (int j = 0; j < sets.setArr.Length; j++)
+                        if (setArr[i] == sets.setArr[j])
+                            intResult.Add(sets.setArr[j]);
 
+                setArr = intResult.ToArray();
+            }
+
+        }
+
+        bool exsistArrInSet(Sets sets)
+        {
+            if(sets.setArr != null)
+                return true;
+            else
+                Console.WriteLine($"your object {sets} not contain array.");
+            return false;
+        } 
+
+        public bool SubSet(Sets sets)
+        {
+            bool duplication = false;
+            if (exsistArrInSet(sets))
+            {
+                for (int i = 0; i < sets.setArr.Length; i++)
+                {
+                    for (int j = 0; j < setArr.Length; j++)
+                        if (sets.setArr[i] == setArr[j])
+                            duplication = true;
+
+                    if (!duplication) 
+                        return false;
+                    duplication = false;
+                }
+                return true;
+            }
+            else return false;
+        }
+
+        public bool IsMember(int number)
+        {
+            for (int i = 0; i < setArr.Length; i++)
+                if (setArr[i] == number) 
+                    return true;
+            
+            return false;
+        }
+
+        public void Inseret(int number)
+        {
+            for (int i = 0; i < setArr.Length; i++)
+                if (setArr[i] == number)
+                    return;
+
+            Array.Resize(ref setArr, setArr.Length + 1);
+            setArr[setArr.GetUpperBound(0)] = number;
+        }
+
+        public void Delet(int number)
+        {
+            setArr = setArr.Where(val => val != number).ToArray();
+        }
+
+    
     }
 }
